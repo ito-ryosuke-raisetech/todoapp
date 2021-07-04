@@ -1,0 +1,59 @@
+//TodoMapper.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.todo.app.mapper.TodoMapper">
+  <select id="selectAll" resultType="com.todo.app.entity.Todo">
+    select * from todo_items
+  </select>
+
+  <insert id="add" parameterType="com.todo.app.entity.Todo">
+    insert into todo_items (title,time_limit)
+    values (#{title},to_date(#{time_limit},'yy-mm-dd'))
+  </insert>
+
+  <update id="update" parameterType="com.todo.app.entity.Todo">
+    update todo_items set
+      title = #{title},
+      time_limit = to_date(#{time_limit},'yy-mm-dd')
+      where id = #{id}
+  </update>
+</mapper>
+
+//index.html
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>TodoApp</title>
+</head>
+<body>
+  <h1>TodoList</h1>
+  <h3>マイタスク</h3>
+  <h3>ご飯を食べる</h3>
+  <h3>宿題をする</h3>
+  <h3>掃除をする</h3>
+  <form method="post" th:action="@{/update}" th:each="todo : ${todos}" >
+    <input type="hidden" name="id" th:value="${todo.id}" />
+    <input type="text" name="title"th:value="${todo.title}" />
+    <input type="date" name="time_limit"th:value="${todo.time_limit}" />
+    <input type="submit" value="更新" />
+  </form>
+
+  <h3>新しいタスクを追加</h3>
+  <form method="post" th:action="@{/add}">
+    <input type="text" name="title" />
+    <input type="date" name="time_limit"/>
+    <input type="submit" value="追加" />
+  </form>
+</body>
+</html>
+
+
+//application.properties
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/todo_db
+spring.datasource.username=todo_user
+spring.datasource.password=todo_pass
+
